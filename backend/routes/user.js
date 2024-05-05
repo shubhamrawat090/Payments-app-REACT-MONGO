@@ -5,6 +5,7 @@ const { JWT_SECRET } = require("../config");
 
 const z = require("zod");
 const { User } = require("../db");
+const { authMiddleware } = require("../middleware");
 
 // Zod schema for input validation
 const signupBody = z.object({
@@ -128,6 +129,61 @@ router.post("/signin", async (req, res) => {
       message: "Error while logging in",
     });
   }
+});
+
+// Update the user credentials
+const updateBody = z.object({
+  password: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+router.put("/", authMiddleware, async (req, res) => {
+  const { success } = updateBody.safeParse(req.body);
+  if (!success) {
+    res.status(411).json({
+      success: false,
+      message: "Error while updating information",
+    });
+  }
+
+  await User.updateOne({ _id: req.userId }, req.body);
+
+  res.status(200).json({
+    success: true,
+    message: "Updated successfully",
+  });
+});
+
+// Search users either by firstName or lastName
+router.get("/bulk", async (req, res) => {
+  const filter = req.query.filter || "";
+
+  // Works same as SELECT * FROM users WHERE firstName LIKE "%shubh%" OR lastName LIKE "%shubh%"
+  const users = await User.find({
+    $or: [
+      {
+        firstName: {
+          $regex: filter,
+        },
+      },
+      {
+        lastName: {
+          $regex: filter,
+        },
+      },
+    ],
+  });
+
+  res.status(200).json({
+    success: true,
+    user: users.map((user) => ({
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      _id: user._id,
+    })),
+  });
 });
 
 module.exports = router;
