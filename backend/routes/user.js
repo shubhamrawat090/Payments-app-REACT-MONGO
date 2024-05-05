@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 
 const z = require("zod");
-const { User } = require("../db");
+const { User, Account } = require("../db");
 const { authMiddleware } = require("../middleware");
 
 // Zod schema for input validation
@@ -70,6 +70,12 @@ router.post("/signup", async (req, res) => {
 
   // Generate token via JWT
   const token = jwt.sign({ userId: newUserId }, JWT_SECRET);
+
+  ///// CREATE A NEW ACCOUNT AND GIVE BALANCE BETWEEN 1-10000
+  await Account.create({
+    userId: newUserId,
+    balance: 1 + Math.random() * 10000
+  })
 
   return res.status(200).json({
     success: true,
