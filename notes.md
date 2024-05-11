@@ -15,3 +15,9 @@ docker run --name mongodb-replset -p 27017:27017 mongodb:4.7-replset
 ```
 mongodb://localhost:27017
 ```
+
+> THIS ERROR IS OCCURRING IN /transaction ROUTE
+
+```
+[MongoServerError: Transaction numbers are only allowed on a replica set member or mongos](https://stackoverflow.com/questions/51461952/mongodb-v4-0-transaction-mongoerror-transaction-numbers-are-only-allowed-on-a)
+```
