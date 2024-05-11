@@ -74,8 +74,8 @@ router.post("/signup", async (req, res) => {
   ///// CREATE A NEW ACCOUNT AND GIVE BALANCE BETWEEN 1-10000
   await Account.create({
     userId: newUserId,
-    balance: 1 + Math.random() * 10000
-  })
+    balance: (1 + Math.random() * 10000).toFixed(2), // Currency shouldn't have more than 2 decimal places
+  });
 
   return res.status(200).json({
     success: true,
