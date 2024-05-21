@@ -31,7 +31,7 @@ const transferBody = z.object({
       required_error: "'amount' is required",
       invalid_type_error: "'amount' should be a number",
     })
-    .positive({ message: "Transfer amount to GREATER THAN 0" }),
+    .positive({ message: "Transfer amount should be GREATER THAN 0" }),
 });
 
 router.post("/transfer", authMiddleware, async (req, res) => {
