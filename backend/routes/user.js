@@ -115,8 +115,18 @@ router.post("/signin", async (req, res) => {
   const { username, password } = req.body;
 
   // Check if DB already contains the user
-  const existingUser = await User.findOne({ username, password });
+  const existingUser = await User.findOne({ username });
+
   if (existingUser) {
+    // Match password
+    // IDEALLY SHOULD BE DONE BY CONVERTING THIS PASSWORD TO HASH AND THEN COMPARING IT VIA JWT
+    if (password !== existingUser.password) {
+      return res.status(411).json({
+        success: false,
+        message: "Wrong Password",
+      });
+    }
+
     // Validate the token
     const token = jwt.sign(
       {
